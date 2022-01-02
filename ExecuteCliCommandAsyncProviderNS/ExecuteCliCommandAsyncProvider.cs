@@ -1,5 +1,4 @@
 ﻿using System.CommandLine;
-using System.CommandLine.IO;
 using System.Diagnostics;
 
 namespace ExecuteCliCommandAsyncProviderNS;
@@ -40,11 +39,11 @@ public static class ExecuteCliCommandAsyncProvider
 
         process.ErrorDataReceived += (sender, dataReceivedEventArgs) =>
         {
-            console.Error.WriteLine(dataReceivedEventArgs.Data);
+            console.Error.Write(dataReceivedEventArgs.Data);
         };
         process.OutputDataReceived += (sender, dataReceivedEventArgs) =>
         {
-            console.Out.WriteLine(dataReceivedEventArgs.Data);
+            console.Out.Write(dataReceivedEventArgs.Data);
         };
 
         process.Start();

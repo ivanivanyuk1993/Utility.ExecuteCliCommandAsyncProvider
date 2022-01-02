@@ -5,23 +5,23 @@ namespace ExecuteCliCommandAsyncProviderNS;
 
 public static class ExecuteCliCommandAsyncProvider
 {
-    public static async Task<int> ExecuteCommandAsync(
-        string command,
+    public static async Task<int> ExecuteCliCommandAsync(
+        string cliCommandText,
         IConsole console,
         CancellationToken cancellationToken
     )
     {
-        var firstSpaceIndex = command.IndexOf(' ');
+        var firstSpaceIndex = cliCommandText.IndexOf(' ');
         string fileName;
         string arguments;
         if (firstSpaceIndex != -1)
         {
-            fileName = command.Substring(0, firstSpaceIndex);
-            arguments = command.Substring(firstSpaceIndex);
+            fileName = cliCommandText.Substring(0, firstSpaceIndex);
+            arguments = cliCommandText.Substring(firstSpaceIndex);
         }
         else
         {
-            fileName = command;
+            fileName = cliCommandText;
             arguments = "";
         }
 

@@ -1,23 +1,26 @@
 ﻿using System.CommandLine;
+using System.CommandLine.IO;
 using System.Diagnostics;
+using System.Text;
+using ExecuteCliCommandResultNS;
 
 namespace ExecuteCliCommandAsyncProviderNS;
 
 public static class ExecuteCliCommandAsyncProvider
 {
-    public static async Task<int> ExecuteCliCommandAsync(
+    public static async Task<ExecuteCliCommandResult> ExecuteCliCommandAsync(
         string cliCommandText,
         IConsole console,
         CancellationToken cancellationToken
     )
     {
-        var firstSpaceIndex = cliCommandText.IndexOf(' ');
+        var firstSpaceIndex = cliCommandText.IndexOf(value: ' ');
         string fileName;
         string arguments;
         if (firstSpaceIndex != -1)
         {
-            fileName = cliCommandText.Substring(0, firstSpaceIndex);
-            arguments = cliCommandText.Substring(firstSpaceIndex);
+            fileName = cliCommandText.Substring(startIndex: 0, length: firstSpaceIndex);
+            arguments = cliCommandText.Substring(startIndex: firstSpaceIndex);
         }
         else
         {
@@ -37,20 +40,26 @@ public static class ExecuteCliCommandAsyncProvider
             }
         };
 
+        var standardOutputStringBuilder = new StringBuilder();
+
         process.ErrorDataReceived += (sender, dataReceivedEventArgs) =>
         {
-            console.Error.Write(dataReceivedEventArgs.Data);
+            console.Error.WriteLine(value: dataReceivedEventArgs.Data);
         };
         process.OutputDataReceived += (sender, dataReceivedEventArgs) =>
         {
-            console.Out.Write(dataReceivedEventArgs.Data);
+            standardOutputStringBuilder.Append(value: dataReceivedEventArgs.Data);
+            console.Out.WriteLine(value: dataReceivedEventArgs.Data);
         };
 
         process.Start();
         process.BeginErrorReadLine();
         process.BeginOutputReadLine();
 
-        await process.WaitForExitAsync(cancellationToken);
-        return process.ExitCode;
+        await process.WaitForExitAsync(cancellationToken: cancellationToken);
+        return new ExecuteCliCommandResult(
+            exitCode: process.ExitCode,
+            standardOutputText: standardOutputStringBuilder.ToString()
+        );
     }
 }

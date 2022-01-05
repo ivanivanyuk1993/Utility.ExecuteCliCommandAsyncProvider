@@ -4,13 +4,20 @@ public class ExecuteCliCommandResult
 {
     public ExecuteCliCommandResult(
         int exitCode,
-        string standardOutputText
+        List<string?> standardErrorOutputTextList,
+        List<string?> standardOutputTextList
     )
     {
         ExitCode = exitCode;
-        StandardOutputText = standardOutputText;
+        StandardErrorOutputTextList = standardErrorOutputTextList;
+        StandardOutputTextList = standardOutputTextList;
     }
 
     public int ExitCode { get; }
-    public string StandardOutputText { get; }
+    public string StandardErrorOutputText => string.Join(
+        separator: '\n',
+        values: StandardErrorOutputTextList
+    );
+    public List<string?> StandardErrorOutputTextList { get; }
+    public List<string?> StandardOutputTextList { get; }
 }

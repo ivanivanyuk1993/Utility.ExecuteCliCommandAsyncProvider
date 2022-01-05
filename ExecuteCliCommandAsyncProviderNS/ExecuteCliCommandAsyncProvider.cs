@@ -1,7 +1,6 @@
 ﻿using System.CommandLine;
 using System.CommandLine.IO;
 using System.Diagnostics;
-using System.Text;
 using ExecuteCliCommandResultNS;
 
 namespace ExecuteCliCommandAsyncProviderNS;
@@ -40,15 +39,17 @@ public static class ExecuteCliCommandAsyncProvider
             }
         };
 
-        var standardOutputStringBuilder = new StringBuilder();
+        var standardErrorOutputTextList = new List<string?>();
+        var standardOutputTextList = new List<string?>();
 
         process.ErrorDataReceived += (sender, dataReceivedEventArgs) =>
         {
+            standardErrorOutputTextList.Add(item: dataReceivedEventArgs.Data);
             console.Error.WriteLine(value: dataReceivedEventArgs.Data);
         };
         process.OutputDataReceived += (sender, dataReceivedEventArgs) =>
         {
-            standardOutputStringBuilder.Append(value: dataReceivedEventArgs.Data);
+            standardOutputTextList.Add(item: dataReceivedEventArgs.Data);
             console.Out.WriteLine(value: dataReceivedEventArgs.Data);
         };
 
@@ -59,7 +60,8 @@ public static class ExecuteCliCommandAsyncProvider
         await process.WaitForExitAsync(cancellationToken: cancellationToken);
         return new ExecuteCliCommandResult(
             exitCode: process.ExitCode,
-            standardOutputText: standardOutputStringBuilder.ToString()
+            standardErrorOutputTextList: standardErrorOutputTextList,
+            standardOutputTextList: standardOutputTextList
         );
     }
 }

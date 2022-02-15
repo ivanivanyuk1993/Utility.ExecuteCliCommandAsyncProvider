@@ -7,6 +7,22 @@ namespace ExecuteCliCommandAsyncProviderNS;
 
 public static class ExecuteCliCommandAsyncProvider
 {
+    public static Task<ExecuteCliCommandResult> ExecuteCliCommandAsync(
+        string[] cliCommandTextPartList,
+        IConsole console,
+        CancellationToken cancellationToken
+    )
+    {
+        return ExecuteCliCommandAsync(
+            cliCommandText: string.Join(
+                separator: " ",
+                value: cliCommandTextPartList
+            ),
+            console: console,
+            cancellationToken: cancellationToken
+        );
+    }
+
     public static async Task<ExecuteCliCommandResult> ExecuteCliCommandAsync(
         string cliCommandText,
         IConsole console,
